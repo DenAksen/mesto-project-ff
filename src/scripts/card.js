@@ -3,12 +3,18 @@
  * @param {*} cardTemplate Шаблон карточки
  * @param {*} data Параметры
  * @param {*} onDelete Функция удаления карточки
- * @param {*} likeCard Функция обработчик лайка 
+ * @param {*} likeCard Функция обработчик лайка
  * @param {*} insertPopupImage Функция передающая каринку в попап
- * @returns 
+ * @returns
  */
-export function createCard(cardTemplate, data, onDelete, likeCard, insertPopupImage) {
-    const cardElement = cardTemplate
+export function createCard(
+  cardTemplate,
+  data,
+  onDelete,
+  likeCard,
+  insertPopupImage
+) {
+  const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
   const delButton = cardElement.querySelector(".card__delete-button");
@@ -38,44 +44,44 @@ export function handleDelete(cardDelete) {
  * @param {boolean} insertBegin Флаг добавления картоки в начало контейнера
  */
 export function renderCard(placeList, card, insertBegin = false) {
-    if (insertBegin) {
-        placeList.prepend(card);
-    } else {
-        placeList.append(card);
-    }
+  if (insertBegin) {
+    placeList.prepend(card);
+  } else {
+    placeList.append(card);
+  }
 }
 
 // Данные для новой карточки
-export const newCardDataObject = (cardName, cardLink) => {
-    const data = {
-            name: cardName.value,
-            link: cardLink.value,
-    };
-    return data;
-}
+export const createNewCardDataObject = (cardName, cardLink) => {
+  const data = {
+    name: cardName.value,
+    link: cardLink.value,
+  };
+  return data;
+};
 
-// Сброс полей формы 
-export const resetInputValue = (arrInput) => {
-  arrInput.forEach(element => {
-    element.value = '';
+// Сброс полей формы
+export const resetInputValue = (arrInputs) => {
+  arrInputs.forEach((element) => {
+    element.value = "";
   });
-}
+};
 
 // Обработчик лайка
 export const handleLikeCard = (likeButton) => {
-  likeButton.classList.toggle('card__like-button_is-active');
-}
+  likeButton.classList.toggle("card__like-button_is-active");
+};
 
 // Функция передающая каринку в попап
 export const handlePopupImage = (cardImage) => {
-  document.querySelector('.popup__image').src = cardImage.src;
-  document.querySelector('.popup__caption').textContent = cardImage.alt;
-}
+  document.querySelector(".popup__image").src = cardImage.src;
+  document.querySelector(".popup__caption").textContent = cardImage.alt;
+};
 
 // function isValidUrl(url) {
 //   // Проверяем базовую структуру URL регулярным выражением
 //   const urlRegex = /^(https?:\/\/)?(www\.)?[a-z0-9-]+(\.[a-z]{2,})+(:\d{1,5})?(\/[\/\w.-]*)*(\?[^\s]*)?(#[^\s]*)?$/i;
-  
+
 //   if (!urlRegex.test(url)) {
 //     return false;
 //   }
