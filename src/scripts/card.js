@@ -4,7 +4,7 @@
  * @param {*} data Параметры
  * @param {*} onDelete Функция удаления карточки
  * @param {*} likeCard Функция обработчик лайка
- * @param {*} insertPopupImage Функция передающая каринку в попап
+ * @param {*} openPopupImage Функция передающая каринку в попап
  * @returns
  */
 export function createCard(
@@ -12,7 +12,7 @@ export function createCard(
   data,
   onDelete,
   likeCard,
-  insertPopupImage
+  openPopupImage
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -27,7 +27,7 @@ export function createCard(
 
   delButton.addEventListener("click", () => onDelete(cardElement));
   likeButton.addEventListener("click", () => likeCard(likeButton));
-  cardImage.addEventListener("click", () => insertPopupImage(cardImage));
+  cardImage.addEventListener("click", () => openPopupImage(cardImage));
 
   return cardElement;
 }
@@ -35,20 +35,6 @@ export function createCard(
 //Удаление карточки
 export function handleDelete(cardDelete) {
   cardDelete.remove();
-}
-
-/**
- * Отрисовка карточек
- * @param {*} placeList Контейнер для добавления
- * @param {*} card Добавляемая карочка
- * @param {boolean} insertBegin Флаг добавления картоки в начало контейнера
- */
-export function renderCard(placeList, card, insertBegin = false) {
-  if (insertBegin) {
-    placeList.prepend(card);
-  } else {
-    placeList.append(card);
-  }
 }
 
 // Данные для новой карточки
@@ -60,42 +46,7 @@ export const createNewCardDataObject = (cardName, cardLink) => {
   return data;
 };
 
-// Сброс полей формы
-export const resetInputValue = (arrInputs) => {
-  arrInputs.forEach((element) => {
-    element.value = "";
-  });
-};
-
 // Обработчик лайка
 export const handleLikeCard = (likeButton) => {
   likeButton.classList.toggle("card__like-button_is-active");
 };
-
-// Функция передающая каринку в попап
-export const handlePopupImage = (cardImage) => {
-  document.querySelector(".popup__image").src = cardImage.src;
-  document.querySelector(".popup__caption").textContent = cardImage.alt;
-};
-
-// function isValidUrl(url) {
-//   // Проверяем базовую структуру URL регулярным выражением
-//   const urlRegex = /^(https?:\/\/)?(www\.)?[a-z0-9-]+(\.[a-z]{2,})+(:\d{1,5})?(\/[\/\w.-]*)*(\?[^\s]*)?(#[^\s]*)?$/i;
-
-//   if (!urlRegex.test(url)) {
-//     return false;
-//   }
-
-//   // Дополнительная проверка через конструктор URL
-//   try {
-//     new URL(url);
-//     return url;
-//   } catch (e) {
-//     return console.log('Invalid link');
-//   }
-// }
-
-// // Отрисовка новой карточки в начале контейнера
-// export function renderNewCard(placeList, card) {
-//   placeList.prepend(card);
-// }

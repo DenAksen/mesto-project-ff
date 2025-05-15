@@ -10,8 +10,6 @@ export const openModal = (modal) => {
   modal.classList.add("popup_is-opened");
   // добавить слушатель на кнопку Escape
   document.addEventListener("keyup", handleEscKeyUp);
-  // Слушатель на элементы закрытия
-  popupAddListener(modal);
 };
 
 export const closeModal = (modal) => {
@@ -38,35 +36,4 @@ export const popupAddListener = (popupElement) => {
       closeModal(popupElement);
     }
   });
-};
-
-// //Слушатель для кнопок открытия popup
-// export const buttonsOpenedPopupAddListener = (elemButtons, elemCards) => {
-//   elemButtons.addEventListener('click', (evt) => {
-//     if (evt.target === addButton) {
-//         openModal(popupNewCard);
-//     } if (evt.target === buttonEdit) {
-//         openModal(popupEdit);
-//     }
-//   });
-//   elemCards.addEventListener('click', (evt) => {
-//     openModal(popupImage);
-//   });
-// }
-
-//Функция заполнения полей формы Профиля при открытии
-export const fillingInputValueOpening = (inputName, inputJob) => {
-  inputName.value = document.querySelector(".profile__title").textContent;
-  inputJob.value = document.querySelector(".profile__description").textContent;
-};
-
-// Обработчик отправки формы Профиля
-export const handleFormSubmit = (evt, inputName, inputJob) => {
-  evt.preventDefault(); // Сброс стандартного поведения
-  document.querySelector(".profile__title").textContent = inputName.value;
-  document.querySelector(".profile__description").textContent = inputJob.value;
-
-  //Грустная альтернатива
-  // document.querySelector('.profile__title').textContent = document.forms['edit-profile'].formProfile.elements.name.value;
-  // document.querySelector('.profile__description').textContent = document.forms['edit-profile'].formProfile.elements.description.value;
 };
