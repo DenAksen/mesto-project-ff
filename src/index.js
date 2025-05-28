@@ -7,6 +7,8 @@ import {
   handleLikeCard,
 } from "./scripts/card.js";
 import { openModal, closeModal, popupAddListener } from "./scripts/modal.js";
+import {validationConfig} from "./scripts/validation/validationConfig.js";
+import {enableValidation, clearValidation} from "./scripts/validation/validation.js";
 
 const content = document.querySelector(".content");
 const placeList = content.querySelector(".places__list");
@@ -49,6 +51,8 @@ function renderCard(placeList, card, insertBegin = false) {
   }
 }
 
+enableValidation(validationConfig);
+
 // Функция открывает попап Картинки
 export const openPopupImage = (cardImage) => {
   popupImageContentImage.src = cardImage.src;
@@ -61,7 +65,16 @@ export const openPopupImage = (cardImage) => {
 function openPopupProfile() {
   inputNameFormProfile.value = titleProfile.textContent;
   inputJobFormProfile.value = descriptionProfile.textContent;
+  clearValidation(formProfile, validationConfig, true);
   openModal(popupEdit);
+}
+
+// Функция открывает попап добавления карточки
+// Внутри вызов clearValidation и openModal(popupNewCard)
+function openPopupNewCard () {
+  formNewCard.reset();
+  clearValidation(formNewCard, validationConfig);
+  openModal(popupNewCard);
 }
 
 // Обработчик отправки формы Профиля
@@ -86,7 +99,7 @@ popupAddListener(popupNewCard);
 popupAddListener(popupImage);
 
 // Слушатели кнопок открытия popup
-buttonAddNewCard.addEventListener("click", () => openModal(popupNewCard));
+buttonAddNewCard.addEventListener("click", openPopupNewCard);
 buttonOpenFormProfile.addEventListener("click", openPopupProfile);
 
 //Слушатель отправки формы Профиль
