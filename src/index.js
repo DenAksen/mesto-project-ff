@@ -1,5 +1,4 @@
 import "./pages/index.css";
-import { initialCards } from "./scripts/cards.js";
 import {
   createCard,
   handleDelete,
@@ -36,6 +35,50 @@ const popupImageContentCaption = document.querySelector(".popup__caption");
 
 const titleProfile = document.querySelector(".profile__title");
 const descriptionProfile = document.querySelector(".profile__description");
+
+const profileImage = document.querySelector('.profile__image');
+
+const getProfileData = async () => {
+  const res = await fetch('https://nomoreparties.co/v1/wff-cohort-39/users/me', {
+    method: 'GET',
+    headers: {
+      authorization: '2af521f8-b96d-49d8-b70e-e06e269daac8'
+    }
+  });
+  return res.json();
+};
+
+const renderInitialCards = async () => {
+  const res = await fetch('https://nomoreparties.co/v1/wff-cohort-39/cards', {
+    method: 'GET',
+    headers: {
+      authorization: '2af521f8-b96d-49d8-b70e-e06e269daac8'
+    }
+  });
+  return res.json();
+};
+
+// Обработка обоих запросов через Promise.all
+Promise.all([getProfileData(), renderInitialCards()])
+  .then(([profileData, cardsData]) => {
+    // Обработка данных профиля
+    console.log(profileData);
+    console.log(cardsData);
+    profileImage.style.backgroundImage = `url(${profileData.avatar})`;
+    titleProfile.textContent = profileData.name;
+    descriptionProfile.textContent = profileData.about;
+    
+    // Обработка карточек
+    cardsData.forEach(item => {
+      renderCard(
+        placeList,
+        createCard(cardTemplate, item, handleDelete, handleLikeCard, openPopupImage)
+      );
+    });
+  })
+  .catch(error => {
+    console.error(`'Ошибка при загрузке данных:', ${error}`);
+  });
 
 /**
  * Отрисовка карточек
@@ -84,14 +127,6 @@ const handleFormProfileSubmit = (evt) => {
   descriptionProfile.textContent = inputJobFormProfile.value;
   closeModal(popupEdit);
 };
-
-// Отрисовка начальных карточек
-initialCards.forEach(function (item) {
-  renderCard(
-    placeList,
-    createCard(cardTemplate, item, handleDelete, handleLikeCard, openPopupImage)
-  );
-});
 
 // Слушатель на элементы закрытия
 popupAddListener(popupEdit);
