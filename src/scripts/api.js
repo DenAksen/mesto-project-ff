@@ -55,3 +55,18 @@ export const submitProfileData = (
       console.error(`'Ошибка при загрузке данных:', ${error}`);
     });
 };
+
+export const submitNewCard = async (inputName, inputLink) => {
+  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/cards", {
+    method: "POST",
+    headers: {
+        authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        name: inputName.value,
+        link: inputLink.value
+    })
+  });
+  return res.json();
+}

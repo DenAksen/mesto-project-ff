@@ -6,9 +6,17 @@ import {
   handleLikeCard,
 } from "./scripts/card.js";
 import { openModal, closeModal, popupAddListener } from "./scripts/modal.js";
-import {validationConfig} from "./scripts/validation/validationConfig.js";
-import {enableValidation, clearValidation} from "./scripts/validation/validation.js";
-import {getProfileData, renderInitialCards, submitProfileData} from "./scripts/api.js";
+import { validationConfig } from "./scripts/validation/validationConfig.js";
+import {
+  enableValidation,
+  clearValidation,
+} from "./scripts/validation/validation.js";
+import {
+  getProfileData,
+  renderInitialCards,
+  submitProfileData,
+  submitNewCard,
+} from "./scripts/api.js";
 
 const content = document.querySelector(".content");
 const placeList = content.querySelector(".places__list");
@@ -37,7 +45,7 @@ const popupImageContentCaption = document.querySelector(".popup__caption");
 const titleProfile = document.querySelector(".profile__title");
 const descriptionProfile = document.querySelector(".profile__description");
 
-const profileImage = document.querySelector('.profile__image');
+const profileImage = document.querySelector(".profile__image");
 
 // Обработка обоих запросов через Promise.all
 Promise.all([getProfileData(), renderInitialCards()])
@@ -48,18 +56,44 @@ Promise.all([getProfileData(), renderInitialCards()])
     profileImage.style.backgroundImage = `url(${profileData.avatar})`;
     titleProfile.textContent = profileData.name;
     descriptionProfile.textContent = profileData.about;
-    
+
     // Обработка карточек
-    cardsData.forEach(item => {
+    cardsData.forEach((item) => {
       renderCard(
         placeList,
-        createCard(cardTemplate, item, handleDelete, handleLikeCard, openPopupImage)
+        createCard(
+          cardTemplate,
+          item,
+          handleDelete,
+          handleLikeCard,
+          openPopupImage
+        )
       );
     });
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(`'Ошибка при загрузке данных:', ${error}`);
   });
+
+// Обработчик отправки формы добавления карточки
+const handleFormNewCardSubmit = async (evt) => {
+  evt.preventDefault();
+  const dataNewCard = await submitNewCard(inputNameFormNewCard, inputLinkFormNewCard);
+  console.log(dataNewCard);
+  renderCard(
+    placeList,
+    createCard(
+      cardTemplate,
+      dataNewCard,
+      handleDelete,
+      handleLikeCard,
+      openPopupImage
+    ),
+    true
+  );
+  formNewCard.reset();
+  closeModal(popupNewCard);
+};
 
 /**
  * Отрисовка карточек
@@ -94,8 +128,7 @@ function openPopupProfile() {
 }
 
 // Функция открывает попап добавления карточки
-// Внутри вызов clearValidation и openModal(popupNewCard)
-function openPopupNewCard () {
+function openPopupNewCard() {
   formNewCard.reset();
   clearValidation(formNewCard, validationConfig);
   openModal(popupNewCard);
@@ -104,7 +137,12 @@ function openPopupNewCard () {
 // Обработчик отправки формы Профиля
 const handleFormProfileSubmit = (evt) => {
   evt.preventDefault(); // Сброс стандартного поведения
-  submitProfileData(inputNameFormProfile, inputJobFormProfile, titleProfile, descriptionProfile);
+  submitProfileData(
+    inputNameFormProfile,
+    inputJobFormProfile,
+    titleProfile,
+    descriptionProfile
+  );
   closeModal(popupEdit);
 };
 
@@ -121,19 +159,5 @@ buttonOpenFormProfile.addEventListener("click", openPopupProfile);
 formProfile.addEventListener("submit", handleFormProfileSubmit);
 
 // Слушатель отправки формы добавления карточки
-formNewCard.addEventListener("submit", (evt) => {
-  evt.preventDefault();
-  renderCard(
-    placeList,
-    createCard(
-      cardTemplate,
-      createNewCardDataObject(inputNameFormNewCard, inputLinkFormNewCard),
-      handleDelete,
-      handleLikeCard,
-      openPopupImage
-    ),
-    true
-  );
-  formNewCard.reset();
-  closeModal(popupNewCard);
-});
+formNewCard.addEventListener("submit", handleFormNewCardSubmit);
+
