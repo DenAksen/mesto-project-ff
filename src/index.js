@@ -8,6 +8,7 @@ import {
 import { openModal, closeModal, popupAddListener } from "./scripts/modal.js";
 import {validationConfig} from "./scripts/validation/validationConfig.js";
 import {enableValidation, clearValidation} from "./scripts/validation/validation.js";
+import {getProfileData, renderInitialCards, submitProfileData} from "./scripts/api.js";
 
 const content = document.querySelector(".content");
 const placeList = content.querySelector(".places__list");
@@ -37,26 +38,6 @@ const titleProfile = document.querySelector(".profile__title");
 const descriptionProfile = document.querySelector(".profile__description");
 
 const profileImage = document.querySelector('.profile__image');
-
-const getProfileData = async () => {
-  const res = await fetch('https://nomoreparties.co/v1/wff-cohort-39/users/me', {
-    method: 'GET',
-    headers: {
-      authorization: '2af521f8-b96d-49d8-b70e-e06e269daac8'
-    }
-  });
-  return res.json();
-};
-
-const renderInitialCards = async () => {
-  const res = await fetch('https://nomoreparties.co/v1/wff-cohort-39/cards', {
-    method: 'GET',
-    headers: {
-      authorization: '2af521f8-b96d-49d8-b70e-e06e269daac8'
-    }
-  });
-  return res.json();
-};
 
 // Обработка обоих запросов через Promise.all
 Promise.all([getProfileData(), renderInitialCards()])
@@ -123,8 +104,7 @@ function openPopupNewCard () {
 // Обработчик отправки формы Профиля
 const handleFormProfileSubmit = (evt) => {
   evt.preventDefault(); // Сброс стандартного поведения
-  titleProfile.textContent = inputNameFormProfile.value;
-  descriptionProfile.textContent = inputJobFormProfile.value;
+  submitProfileData(inputNameFormProfile, inputJobFormProfile, titleProfile, descriptionProfile);
   closeModal(popupEdit);
 };
 
