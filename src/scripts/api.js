@@ -31,8 +31,6 @@ export const getInitialCards = async () => {
   }
 };
 
-("https://nomoreparties.co/v1/cohortId/users/me");
-
 // Обновление данных профиля
 export const submitProfileData = (
   inputName,
@@ -97,3 +95,17 @@ export const deleteCard = async (cardId) => {
     return Promise.reject(`Ошибка: ${res.status}`);
   }
 };
+
+export const toggleCardLike = async (cardId, method) => {
+  const res = await fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/likes/${cardId}`, {
+        method: method,
+    headers: {
+      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8"
+    }
+  });
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+}

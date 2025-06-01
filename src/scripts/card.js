@@ -5,7 +5,8 @@
  * @param {*} onDelete Функция удаления карточки
  * @param {*} likeCard Функция обработчик лайка
  * @param {*} openPopupImage Функция передающая каринку в попап
- * @param {boolean} displayButtonDelete Функция передающая каринку в попап
+ * @param {boolean} displayButtonDelete Нужно ли отображать кнопку удаления карточки
+ * @param {boolean} displayLikeCardActive Нужно ли отображать лайк активным
  * @returns
  */
 export function createCard(
@@ -14,7 +15,8 @@ export function createCard(
   onDelete,
   likeCard,
   openPopupImage,
-  displayButtonDelete = true
+  displayButtonDelete = true,
+  displayLikeCardActive = false
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -22,9 +24,12 @@ export function createCard(
   const delButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
   const cardImage = cardElement.querySelector(".card__image");
-  const cardLikesTextElement = cardElement.querySelector('.card__quantity-likes');
+  const cardLikesCount = cardElement.querySelector('.card__quantity-likes');
 
-  cardLikesTextElement.textContent = data.likes.length;
+  if (displayLikeCardActive) {
+    likeButton.classList.add("card__like-button_is-active");
+  };
+  cardLikesCount.textContent = data.likes.length;
 
   cardImage.src = data.link;
   cardImage.alt = data.name;
@@ -33,32 +38,14 @@ export function createCard(
   displayButtonDelete
   ? delButton.addEventListener("click", () => onDelete(data._id, cardElement))
   : delButton.style.display = 'none';
-  likeButton.addEventListener("click", () => likeCard(likeButton));
+
+  likeButton.addEventListener("click", () => likeCard(data._id, likeButton, cardLikesCount));
   cardImage.addEventListener("click", () => openPopupImage(cardImage));
 
   return cardElement;
 }
 
-//Удаление карточки
-export function handleDelete(cardDelete) {
-  cardDelete.remove();
-}
-
-// Данные для новой карточки
-export const createNewCardDataObject = (cardName, cardLink) => {
-  const data = {
-    name: cardName.value,
-    link: cardLink.value,
-  };
-  return data;
-};
-
 // Обработчик лайка
 export const handleLikeCard = (likeButton) => {
   likeButton.classList.toggle("card__like-button_is-active");
 };
-
-// //  Отображение количества лайков
-// const displayQuantityLikes = (cardLikesTextElement, arrayLikes) => {
-//   cardLikesTextElement.textContent = arrayLikes.length;
-// };
