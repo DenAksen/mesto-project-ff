@@ -31,7 +31,7 @@ export function createCard(
   cardElement.querySelector(".card__title").textContent = data.name;
 
   displayButtonDelete
-  ? delButton.addEventListener("click", () => onDelete(cardElement))
+  ? delButton.addEventListener("click", () => onDelete(data._id, cardElement))
   : delButton.style.display = 'none';
   likeButton.addEventListener("click", () => likeCard(likeButton));
   cardImage.addEventListener("click", () => openPopupImage(cardImage));

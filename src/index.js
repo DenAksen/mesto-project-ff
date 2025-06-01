@@ -16,6 +16,7 @@ import {
   getInitialCards,
   submitProfileData,
   submitNewCard,
+  deleteCard
 } from "./scripts/api.js";
 
 const content = document.querySelector(".content");
@@ -28,7 +29,9 @@ const buttonOpenFormProfile = content.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImage = document.querySelector(".popup_type_image");
-const popupCardDelete = document.querySelector(".popup_type_card-delete")
+const popupCardDelete = document.querySelector(".popup_type_card-delete");
+const confirmDeleteForm = popupCardDelete.querySelector('.popup__form');
+const submitButton = confirmDeleteForm.querySelector('.popup__button_card-delete');
 // Секция Профиль для слушателя кнопок открытия попапа
 const profilePageSection = content.querySelector(".profile");
 // Форма редактирования профиля
@@ -60,13 +63,12 @@ Promise.all([getProfileData(), getInitialCards()])
 
     // Обработка карточек
     cardsData.forEach((item) => {
-      console.log(item.owner._id === profileData._id);
       renderCard(
         placeList,
         createCard(
           cardTemplate,
           item,
-          openPopupCardDelete,
+          handleCardDelete,
           handleLikeCard,
           openPopupImage,
           (item.owner._id === profileData._id)
@@ -88,7 +90,7 @@ const handleFormNewCardSubmit = async (evt) => {
     createCard(
       cardTemplate,
       dataNewCard,
-      openPopupCardDelete,
+      handleCardDelete,
       handleLikeCard,
       openPopupImage
     ),
@@ -115,9 +117,34 @@ function renderCard(placeList, card, insertBegin = false) {
 enableValidation(validationConfig);
 
 // Открывает попап удаления карточки
-const openPopupCardDelete = () => {
+const handleCardDelete = (cardId, cardElement) => {
+    // Обработчик отправки формы подтверждения
+  function handleConfirmSubmit(evt) {
+    evt.preventDefault();
+    
+    // Добавляем текст "Удаление..." на кнопку
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'Удаление...';
+
+    deleteCard(cardId)
+      .then(() => {
+        cardElement.remove();
+        closeModal(popupCardDelete);
+      })
+      .catch(err => {
+        console.error('Ошибка при удалении карточки:', err);
+      })
+      .finally(() => {
+        submitButton.textContent = originalText;
+      });
+  }
+
+  // Удаляем старый обработчик и добавляем новый
+  confirmDeleteForm.removeEventListener('submit', handleConfirmSubmit);
+  confirmDeleteForm.addEventListener('submit', handleConfirmSubmit);
+
   openModal(popupCardDelete);
-}
+};
 
 // Функция открывает попап Картинки
 export const openPopupImage = (cardImage) => {

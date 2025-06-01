@@ -9,7 +9,11 @@ export const getProfileData = async () => {
       },
     }
   );
-  return res.json();
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
 };
 
 // Получение данных карточек
@@ -20,7 +24,11 @@ export const getInitialCards = async () => {
       authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
     },
   });
-  return res.json();
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
 };
 
 ("https://nomoreparties.co/v1/cohortId/users/me");
@@ -74,3 +82,18 @@ export const submitNewCard = async (inputName, inputLink) => {
   });
   return res.json();
 }
+
+// Удаление карточки
+export const deleteCard = async (cardId) => {
+  const res = await fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: {
+      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8"
+    }
+  });
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+};
