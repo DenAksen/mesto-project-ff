@@ -1,3 +1,4 @@
+// Получение данных пользователя
 export const getProfileData = async () => {
   const res = await fetch(
     "https://nomoreparties.co/v1/wff-cohort-39/users/me",
@@ -11,7 +12,8 @@ export const getProfileData = async () => {
   return res.json();
 };
 
-export const renderInitialCards = async () => {
+// Получение данных карточек
+export const getInitialCards = async () => {
   const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/cards", {
     method: "GET",
     headers: {
@@ -23,6 +25,7 @@ export const renderInitialCards = async () => {
 
 ("https://nomoreparties.co/v1/cohortId/users/me");
 
+// Обновление данных профиля
 export const submitProfileData = (
   inputName,
   inputJob,
@@ -56,6 +59,7 @@ export const submitProfileData = (
     });
 };
 
+// Добавление новой карточки
 export const submitNewCard = async (inputName, inputLink) => {
   const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/cards", {
     method: "POST",

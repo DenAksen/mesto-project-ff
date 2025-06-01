@@ -5,6 +5,7 @@
  * @param {*} onDelete Функция удаления карточки
  * @param {*} likeCard Функция обработчик лайка
  * @param {*} openPopupImage Функция передающая каринку в попап
+ * @param {boolean} displayButtonDelete Функция передающая каринку в попап
  * @returns
  */
 export function createCard(
@@ -12,7 +13,8 @@ export function createCard(
   data,
   onDelete,
   likeCard,
-  openPopupImage
+  openPopupImage,
+  displayButtonDelete = true
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -20,12 +22,17 @@ export function createCard(
   const delButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
   const cardImage = cardElement.querySelector(".card__image");
+  const cardLikesTextElement = cardElement.querySelector('.card__quantity-likes');
+
+  cardLikesTextElement.textContent = data.likes.length;
 
   cardImage.src = data.link;
   cardImage.alt = data.name;
   cardElement.querySelector(".card__title").textContent = data.name;
 
-  delButton.addEventListener("click", () => onDelete(cardElement));
+  displayButtonDelete
+  ? delButton.addEventListener("click", () => onDelete(cardElement))
+  : delButton.style.display = 'none';
   likeButton.addEventListener("click", () => likeCard(likeButton));
   cardImage.addEventListener("click", () => openPopupImage(cardImage));
 
@@ -50,3 +57,8 @@ export const createNewCardDataObject = (cardName, cardLink) => {
 export const handleLikeCard = (likeButton) => {
   likeButton.classList.toggle("card__like-button_is-active");
 };
+
+// //  Отображение количества лайков
+// const displayQuantityLikes = (cardLikesTextElement, arrayLikes) => {
+//   cardLikesTextElement.textContent = arrayLikes.length;
+// };

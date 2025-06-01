@@ -13,7 +13,7 @@ import {
 } from "./scripts/validation/validation.js";
 import {
   getProfileData,
-  renderInitialCards,
+  getInitialCards,
   submitProfileData,
   submitNewCard,
 } from "./scripts/api.js";
@@ -28,6 +28,7 @@ const buttonOpenFormProfile = content.querySelector(".profile__edit-button");
 const popupEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImage = document.querySelector(".popup_type_image");
+const popupCardDelete = document.querySelector(".popup_type_card-delete")
 // Секция Профиль для слушателя кнопок открытия попапа
 const profilePageSection = content.querySelector(".profile");
 // Форма редактирования профиля
@@ -48,7 +49,7 @@ const descriptionProfile = document.querySelector(".profile__description");
 const profileImage = document.querySelector(".profile__image");
 
 // Обработка обоих запросов через Promise.all
-Promise.all([getProfileData(), renderInitialCards()])
+Promise.all([getProfileData(), getInitialCards()])
   .then(([profileData, cardsData]) => {
     // Обработка данных профиля
     console.log(profileData);
@@ -59,14 +60,16 @@ Promise.all([getProfileData(), renderInitialCards()])
 
     // Обработка карточек
     cardsData.forEach((item) => {
+      console.log(item.owner._id === profileData._id);
       renderCard(
         placeList,
         createCard(
           cardTemplate,
           item,
-          handleDelete,
+          openPopupCardDelete,
           handleLikeCard,
-          openPopupImage
+          openPopupImage,
+          (item.owner._id === profileData._id)
         )
       );
     });
@@ -85,7 +88,7 @@ const handleFormNewCardSubmit = async (evt) => {
     createCard(
       cardTemplate,
       dataNewCard,
-      handleDelete,
+      openPopupCardDelete,
       handleLikeCard,
       openPopupImage
     ),
@@ -110,6 +113,11 @@ function renderCard(placeList, card, insertBegin = false) {
 }
 
 enableValidation(validationConfig);
+
+// Открывает попап удаления карточки
+const openPopupCardDelete = () => {
+  openModal(popupCardDelete);
+}
 
 // Функция открывает попап Картинки
 export const openPopupImage = (cardImage) => {
@@ -150,6 +158,7 @@ const handleFormProfileSubmit = (evt) => {
 popupAddListener(popupEdit);
 popupAddListener(popupNewCard);
 popupAddListener(popupImage);
+popupAddListener(popupCardDelete);
 
 // Слушатели кнопок открытия popup
 buttonAddNewCard.addEventListener("click", openPopupNewCard);
