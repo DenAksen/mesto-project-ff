@@ -237,10 +237,6 @@ Promise.all([getProfileData(), getInitialCards()])
 
     // Обработка карточек
     cardsData.forEach((item) => {
-      const displayButtonDelete = item.owner._id === profileData._id;
-      const displayLikeCardActive = item.likes.some(
-        (user) => user._id === profileData._id
-      );
       renderCard(
         placeList,
         createCard(
@@ -249,8 +245,7 @@ Promise.all([getProfileData(), getInitialCards()])
           handleCardDelete,
           handleCardLike,
           openPopupImage,
-          displayButtonDelete,
-          displayLikeCardActive
+          profileData._id
         )
       );
     });

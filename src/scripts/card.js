@@ -5,8 +5,6 @@
  * @param {*} onDelete Функция удаления карточки
  * @param {*} likeCard Функция обработчик лайка
  * @param {*} openPopupImage Функция передающая каринку в попап
- * @param {boolean} displayButtonDelete Нужно ли отображать кнопку удаления карточки
- * @param {boolean} displayLikeCardActive Нужно ли отображать лайк активным
  * @returns
  */
 export function createCard(
@@ -15,8 +13,7 @@ export function createCard(
   onDelete,
   likeCard,
   openPopupImage,
-  displayButtonDelete = true,
-  displayLikeCardActive = false
+  profileId
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -25,6 +22,10 @@ export function createCard(
   const likeButton = cardElement.querySelector(".card__like-button");
   const cardImage = cardElement.querySelector(".card__image");
   const cardLikesCount = cardElement.querySelector(".card__quantity-likes");
+  const displayButtonDelete = data.owner._id === profileId;
+  const displayLikeCardActive = data.likes.some(
+    (user) => user._id === profileId
+  );
 
   if (displayLikeCardActive) {
     likeButton.classList.add("card__like-button_is-active");
