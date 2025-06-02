@@ -21,13 +21,13 @@
       <main class="content">
         <section class="profile page__section">
           <div class="profile__image-container">
-          <div
-            class="profile__image"
-            style="background-image: url()"
-          ></div>
+            <div class="profile__image" style="background-image: url()"></div>
             <div class="profile__image-overlay">
               <svg class="profile__edit-icon" viewBox="0 0 26 26">
-                <path d="M26 3.45351L6.76981 22.7932L3.33585 19.2903L22.517 0L26 3.45351ZM0 26L5.10189 24.4706L1.52075 21.0171L0 26Z" fill="white"/>
+                <path
+                  d="M26 3.45351L6.76981 22.7932L3.33585 19.2903L22.517 0L26 3.45351ZM0 26L5.10189 24.4706L1.52075 21.0171L0 26Z"
+                  fill="white"
+                />
               </svg>
             </div>
           </div>
@@ -106,7 +106,9 @@
                 pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$"
                 data-validity-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
               />
-              <span class="popup__input_type_error place-name-input-error"></span>
+              <span
+                class="popup__input_type_error place-name-input-error"
+              ></span>
             </label>
             <label class="form__field">
               <input
@@ -137,7 +139,10 @@
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Вы уверены?</h3>
           <form class="popup__form" name="card-delete">
-            <button type="submit" class="button popup__button popup__button_card-delete">
+            <button
+              type="submit"
+              class="button popup__button popup__button_card-delete"
+            >
               Да
             </button>
           </form>
@@ -167,7 +172,6 @@
         </div>
       </div>
     </div>
-
 
     <template id="card-template">
       <li class="places__item card">
