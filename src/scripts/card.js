@@ -47,8 +47,3 @@ export function createCard(
 
   return cardElement;
 }
-
-// Обработчик лайка
-export const handleLikeCard = (likeButton) => {
-  likeButton.classList.toggle("card__like-button_is-active");
-};

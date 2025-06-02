@@ -1,10 +1,5 @@
 import "./pages/index.css";
-import {
-  createCard,
-  handleDelete,
-  createNewCardDataObject,
-  handleLikeCard,
-} from "./scripts/card.js";
+import { createCard } from "./scripts/card.js";
 import { openModal, closeModal, popupAddListener } from "./scripts/modal.js";
 import { validationConfig } from "./scripts/validation/validationConfig.js";
 import {
