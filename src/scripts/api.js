@@ -1,7 +1,7 @@
 const config = {
-  baseUrl: 'https://nomoreparties.co/v1/cohort-42',
+  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-39',
   headers: {
-    authorization: 'c56e30dc-2883-4270-a59e-b2f7bae969c6',
+    authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
     'Content-Type': 'application/json'
   }
 }
@@ -9,12 +9,10 @@ const config = {
 // Получение данных пользователя
 export const getProfileData = async () => {
   const res = await fetch(
-    "https://nomoreparties.co/v1/wff-cohort-39/users/me",
+    `${config.baseUrl}/users/me`,
     {
       method: "GET",
-      headers: {
-        authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
-      },
+      headers: config.headers
     }
   );
   if (res.ok) {
@@ -26,11 +24,9 @@ export const getProfileData = async () => {
 
 // Получение данных карточек
 export const getInitialCards = async () => {
-  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/cards", {
+  const res = await fetch(`${config.baseUrl}/cards`, {
     method: "GET",
-    headers: {
-      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
-    },
+    headers: config.headers
   });
   if (res.ok) {
     return res.json();
@@ -44,12 +40,9 @@ export const submitProfileData = async (
   inputName,
   inputJob
 ) => {
-  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/users/me", {
+  const res = await fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
-    headers: {
-      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: inputName.value,
       about: inputJob.value,
@@ -64,12 +57,9 @@ export const submitProfileData = async (
 
 // Добавление новой карточки
 export const submitNewCard = async (inputName, inputLink) => {
-  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/cards", {
+  const res = await fetch(`${config.baseUrl}/cards`, {
     method: "POST",
-    headers: {
-        authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
-        'Content-Type': 'application/json'
-    },
+    headers: config.headers,
     body: JSON.stringify({
         name: inputName.value,
         link: inputLink.value
@@ -84,11 +74,9 @@ export const submitNewCard = async (inputName, inputLink) => {
 
 // Удаление карточки
 export const deleteCard = async (cardId) => {
-  const res = await fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/${cardId}`, {
+  const res = await fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
-    headers: {
-      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8"
-    }
+    headers: config.headers
   });
   if (res.ok) {
     return res.json();
@@ -98,11 +86,9 @@ export const deleteCard = async (cardId) => {
 };
 
 export const toggleCardLike = async (cardId, method) => {
-  const res = await fetch(`https://nomoreparties.co/v1/wff-cohort-39/cards/likes/${cardId}`, {
+  const res = await fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
         method: method,
-    headers: {
-      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8"
-    }
+    headers: config.headers
   });
   if (res.ok) {
     return res.json();
@@ -112,12 +98,9 @@ export const toggleCardLike = async (cardId, method) => {
 };
 
 export const changeAvatar = async (url) => {
-  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/users/me/avatar", {
+  const res = await fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
-    headers: {
-      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
     body: JSON.stringify({
       avatar: url
     }),
