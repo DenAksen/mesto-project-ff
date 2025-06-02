@@ -17,7 +17,8 @@ import {
   submitProfileData,
   submitNewCard,
   deleteCard,
-  toggleCardLike
+  toggleCardLike,
+  changeAvatar
 } from "./scripts/api.js";
 
 const content = document.querySelector(".content");
@@ -33,20 +34,28 @@ const popupEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImage = document.querySelector(".popup_type_image");
 const popupCardDelete = document.querySelector(".popup_type_card-delete");
+const popupUpdateAvatar = document.querySelector(".popup_type_avatar");
+
+// Форма смены аватара
+const formUpdateAvatar = popupUpdateAvatar.querySelector(".popup__form");
+const inputUpdateAvatar = formUpdateAvatar.elements.link;
+const submitButtonFormAvatar = formUpdateAvatar.querySelector(".popup__button");
 
 // Форма удаления карточки
-const confirmDeleteForm = popupCardDelete.querySelector('.popup__form');
-const submitButton = confirmDeleteForm.querySelector('.popup__button_card-delete');
+const formDeleteCard = popupCardDelete.querySelector('.popup__form');
+const submitButtonFormDeleteCard = formDeleteCard.querySelector('.popup__button_card-delete');
 
 // Форма редактирования профиля
 const formProfile = document.forms["edit-profile"];
 const inputNameFormProfile = formProfile.elements.name;
 const inputJobFormProfile = formProfile.elements.description;
+const submitButtonFormProfile = formProfile.querySelector(".popup__button");
 
 // Форма добавления карточки
 const formNewCard = document.forms["new-place"];
 const inputNameFormNewCard = formNewCard.elements["place-name"];
 const inputLinkFormNewCard = formNewCard.elements.link;
+const submitButtonFormNewCard = formNewCard.querySelector(".popup__button");
 
 const popupImageContentImage = document.querySelector(".popup__image");
 const popupImageContentCaption = document.querySelector(".popup__caption");
@@ -59,21 +68,30 @@ const profileImage = document.querySelector(".profile__image");
 // Обработчик отправки формы добавления карточки
 const handleFormNewCardSubmit = async (evt) => {
   evt.preventDefault();
-  const dataNewCard = await submitNewCard(inputNameFormNewCard, inputLinkFormNewCard);
-  console.log(dataNewCard);
+  const originalText = submitButtonFormNewCard.textContent;
+  submitButtonFormNewCard.textContent = 'Сохранение...';
+  submitNewCard(inputNameFormNewCard, inputLinkFormNewCard)
+  .then((res) => {
   renderCard(
     placeList,
     createCard(
       cardTemplate,
-      dataNewCard,
+      res,
       handleCardDelete,
       handleCardLike,
       openPopupImage
     ),
     true
-  );
-  formNewCard.reset();
-  closeModal(popupNewCard);
+  )
+  })
+    .catch((error) => {
+    console.error(`'Ошибка при загрузке данных:', ${error}`);
+  })
+  .finally(() => {
+    submitButtonFormNewCard.textContent = originalText;
+    formNewCard.reset();
+    closeModal(popupNewCard);
+  });
 };
 
 /**
@@ -95,8 +113,8 @@ const handleCardDelete = (cardId, cardElement) => {
     evt.preventDefault();
     
     // Добавляем текст "Удаление..." на кнопку
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'Удаление...';
+    const originalText = submitButtonFormDeleteCard.textContent;
+    submitButtonFormDeleteCard.textContent = 'Удаление...';
 
     deleteCard(cardId)
       .then(() => {
@@ -107,13 +125,13 @@ const handleCardDelete = (cardId, cardElement) => {
         console.error(`Ошибка при удалении карточки:, ${err}`);
       })
       .finally(() => {
-        submitButton.textContent = originalText;
+        submitButtonFormDeleteCard.textContent = originalText;
       });
   }
 
   // Удаляем старый обработчик и добавляем новый
-  confirmDeleteForm.removeEventListener('submit', handleConfirmSubmit);
-  confirmDeleteForm.addEventListener('submit', handleConfirmSubmit);
+  formDeleteCard.removeEventListener('submit', handleConfirmSubmit);
+  formDeleteCard.addEventListener('submit', handleConfirmSubmit);
 
   openModal(popupCardDelete);
 };
@@ -162,26 +180,60 @@ function openPopupNewCard() {
   formNewCard.reset();
   clearValidation(formNewCard, validationConfig);
   openModal(popupNewCard);
+};
+
+// Открывает попап смены аватара
+function openPopupUpdateAvatar() {
+  formUpdateAvatar.reset();
+  clearValidation(formUpdateAvatar, validationConfig);
+  openModal(popupUpdateAvatar);
+};
+
+// Обработчик отправки формы смены аватара
+function handleFormAvatarSubmit (evt) {
+  evt.preventDefault();
+  const url = inputUpdateAvatar.value;
+  const originalText = submitButtonFormAvatar.textContent;
+  submitButtonFormAvatar.textContent = 'Сохранение...';
+  changeAvatar(url)
+  .then ((res) => {
+    profileImage.style.backgroundImage = `url(${res.avatar})`;
+    closeModal(popupUpdateAvatar);
+  })
+  .catch((error) => {
+    console.error(`'Ошибка при загрузке данных:', ${error}`);
+  })
+  .finally(() => {
+    submitButtonFormAvatar.textContent = originalText;
+  });
 }
 
 // Обработчик отправки формы Профиля
 const handleFormProfileSubmit = (evt) => {
   evt.preventDefault(); // Сброс стандартного поведения
+  const originalText = submitButtonFormProfile.textContent;
+  submitButtonFormProfile.textContent = 'Сохранение...';
   submitProfileData(
     inputNameFormProfile,
-    inputJobFormProfile,
-    titleProfile,
-    descriptionProfile
-  );
-  closeModal(popupEdit);
+    inputJobFormProfile
+  )
+  .then((result) => {
+    titleProfile.textContent = result.name;
+    descriptionProfile.textContent = result.about;
+  })
+  .catch((error) => {
+    console.error(`'Ошибка при загрузке данных:', ${error}`);
+  })
+  .finally(() => {
+    submitButtonFormProfile.textContent = originalText;
+    closeModal(popupEdit);
+  });
 };
 
-// Обработка обоих запросов через Promise.all
+// Обработка стартовых запросов через Promise.all
 Promise.all([getProfileData(), getInitialCards()])
   .then(([profileData, cardsData]) => {
     // Обработка данных профиля
-    console.log(profileData);
-    console.log(cardsData);
     profileImage.style.backgroundImage = `url(${profileData.avatar})`;
     titleProfile.textContent = profileData.name;
     descriptionProfile.textContent = profileData.about;
@@ -190,7 +242,6 @@ Promise.all([getProfileData(), getInitialCards()])
     cardsData.forEach((item) => {
       const displayButtonDelete = item.owner._id === profileData._id;
       const displayLikeCardActive = item.likes.some(user => user._id === profileData._id);
-      console.log(displayLikeCardActive)
       renderCard(
         placeList,
         createCard(
@@ -216,13 +267,18 @@ popupAddListener(popupEdit);
 popupAddListener(popupNewCard);
 popupAddListener(popupImage);
 popupAddListener(popupCardDelete);
+popupAddListener(popupUpdateAvatar);
 
 // Слушатели кнопок открытия popup
 buttonAddNewCard.addEventListener("click", openPopupNewCard);
 buttonOpenFormProfile.addEventListener("click", openPopupProfile);
+profileImage.addEventListener("click", openPopupUpdateAvatar);
 
 //Слушатель отправки формы Профиль
 formProfile.addEventListener("submit", handleFormProfileSubmit);
 
 // Слушатель отправки формы добавления карточки
 formNewCard.addEventListener("submit", handleFormNewCardSubmit);
+
+// Слушатель отправки формы смены аватара
+formUpdateAvatar.addEventListener("submit", handleFormAvatarSubmit);

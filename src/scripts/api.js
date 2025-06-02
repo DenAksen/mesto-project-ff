@@ -1,3 +1,11 @@
+const config = {
+  baseUrl: 'https://nomoreparties.co/v1/cohort-42',
+  headers: {
+    authorization: 'c56e30dc-2883-4270-a59e-b2f7bae969c6',
+    'Content-Type': 'application/json'
+  }
+}
+
 // Получение данных пользователя
 export const getProfileData = async () => {
   const res = await fetch(
@@ -32,13 +40,11 @@ export const getInitialCards = async () => {
 };
 
 // Обновление данных профиля
-export const submitProfileData = (
+export const submitProfileData = async (
   inputName,
-  inputJob,
-  titleProfile,
-  descriptionProfile
+  inputJob
 ) => {
-  fetch("https://nomoreparties.co/v1/wff-cohort-39/users/me", {
+  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/users/me", {
     method: "PATCH",
     headers: {
       authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
@@ -49,20 +55,11 @@ export const submitProfileData = (
       about: inputJob.value,
     }),
   })
-    .then((res) => {
-      if (!res.ok) {
-        // Если ответ сервера не успешный, бросаем ошибку с кодом статуса
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      return res.json();
-    })
-    .then((result) => {
-      titleProfile.textContent = result.name;
-      descriptionProfile.textContent = result.about;
-    })
-    .catch((error) => {
-      console.error(`'Ошибка при загрузке данных:', ${error}`);
-    });
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
 };
 
 // Добавление новой карточки
@@ -78,7 +75,11 @@ export const submitNewCard = async (inputName, inputLink) => {
         link: inputLink.value
     })
   });
-  return res.json();
+  if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
 }
 
 // Удаление карточки
@@ -108,4 +109,22 @@ export const toggleCardLike = async (cardId, method) => {
   } else {
     return Promise.reject(`Ошибка: ${res.status}`);
   }
-}
+};
+
+export const changeAvatar = async (url) => {
+  const res = await fetch("https://nomoreparties.co/v1/wff-cohort-39/users/me/avatar", {
+    method: "PATCH",
+    headers: {
+      authorization: "2af521f8-b96d-49d8-b70e-e06e269daac8",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      avatar: url
+    }),
+  });
+    if (res.ok) {
+    return res.json();
+  } else {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+};
