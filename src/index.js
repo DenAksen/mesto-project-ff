@@ -15,6 +15,10 @@ import {
   toggleCardLike,
   changeAvatar,
 } from "./scripts/api.js";
+import {
+  changeTextButtonSaveOnLoad,
+  changeTextButtonDeleteOnLoad
+} from "./scripts/changeTextButtonOnLoad.js";
 
 const content = document.querySelector(".content");
 const placeList = content.querySelector(".places__list");
@@ -65,9 +69,7 @@ const profileImage = document.querySelector(".profile__image");
 // Обработчик отправки формы добавления карточки
 const handleFormNewCardSubmit = async (evt) => {
   evt.preventDefault();
-  const originalText = submitButtonFormNewCard.textContent;
-  submitButtonFormNewCard.textContent = "Сохранение...";
-  submitNewCard(inputNameFormNewCard, inputLinkFormNewCard)
+  submitNewCard(inputNameFormNewCard, inputLinkFormNewCard, submitButtonFormNewCard)
     .then((res) => {
       renderCard(
         placeList,
@@ -76,18 +78,19 @@ const handleFormNewCardSubmit = async (evt) => {
           res,
           handleCardDelete,
           handleCardLike,
-          openPopupImage
+          openPopupImage,
+          'newCard'
         ),
         true
       );
+      formNewCard.reset();
+      closeModal(popupNewCard);
     })
     .catch((error) => {
       console.error(`'Ошибка при загрузке данных:', ${error}`);
     })
     .finally(() => {
-      submitButtonFormNewCard.textContent = originalText;
-      formNewCard.reset();
-      closeModal(popupNewCard);
+      changeTextButtonSaveOnLoad(submitButtonFormNewCard, false);
     });
 };
 
@@ -106,12 +109,7 @@ const handleCardDelete = (cardId, cardElement) => {
   // Обработчик отправки формы подтверждения
   function handleConfirmSubmit(evt) {
     evt.preventDefault();
-
-    // Добавляем текст "Удаление..." на кнопку
-    const originalText = submitButtonFormDeleteCard.textContent;
-    submitButtonFormDeleteCard.textContent = "Удаление...";
-
-    deleteCard(cardId)
+    deleteCard(cardId, submitButtonFormDeleteCard)
       .then(() => {
         cardElement.remove();
         closeModal(popupCardDelete);
@@ -120,7 +118,7 @@ const handleCardDelete = (cardId, cardElement) => {
         console.error(`Ошибка при удалении карточки:, ${err}`);
       })
       .finally(() => {
-        submitButtonFormDeleteCard.textContent = originalText;
+        changeTextButtonDeleteOnLoad(submitButtonFormDeleteCard, false);
       });
   }
 
@@ -188,9 +186,7 @@ function openPopupUpdateAvatar() {
 function handleFormAvatarSubmit(evt) {
   evt.preventDefault();
   const url = inputUpdateAvatar.value;
-  const originalText = submitButtonFormAvatar.textContent;
-  submitButtonFormAvatar.textContent = "Сохранение...";
-  changeAvatar(url)
+  changeAvatar(url, submitButtonFormAvatar)
     .then((res) => {
       profileImage.style.backgroundImage = `url(${res.avatar})`;
       closeModal(popupUpdateAvatar);
@@ -199,26 +195,24 @@ function handleFormAvatarSubmit(evt) {
       console.error(`'Ошибка при загрузке данных:', ${error}`);
     })
     .finally(() => {
-      submitButtonFormAvatar.textContent = originalText;
+      changeTextButtonSaveOnLoad(submitButtonFormAvatar, false);
     });
 }
 
 // Обработчик отправки формы Профиля
 const handleFormProfileSubmit = (evt) => {
   evt.preventDefault(); // Сброс стандартного поведения
-  const originalText = submitButtonFormProfile.textContent;
-  submitButtonFormProfile.textContent = "Сохранение...";
-  submitProfileData(inputNameFormProfile, inputJobFormProfile)
+  submitProfileData(inputNameFormProfile, inputJobFormProfile, submitButtonFormProfile)
     .then((result) => {
       titleProfile.textContent = result.name;
       descriptionProfile.textContent = result.about;
+      closeModal(popupEdit);
     })
     .catch((error) => {
       console.error(`'Ошибка при загрузке данных:', ${error}`);
     })
     .finally(() => {
-      submitButtonFormProfile.textContent = originalText;
-      closeModal(popupEdit);
+      changeTextButtonSaveOnLoad(submitButtonFormProfile, false);
     });
 };
 

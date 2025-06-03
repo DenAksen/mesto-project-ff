@@ -1,3 +1,15 @@
+const disableSubmitButton = (buttonElement, inactiveClass) => {
+  // Деактивация кнопки
+  buttonElement.disabled = true;
+  buttonElement.classList.add(inactiveClass);
+};
+
+const enableSubmitButton = (buttonElement, inactiveClass) => {
+  // Активация кнопки
+  buttonElement.disabled = false;
+  buttonElement.classList.remove(inactiveClass);
+};
+
 const showInputError = (formElement, inputElement, errorMessage, errorClass) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.add(errorClass);
@@ -18,11 +30,9 @@ const hasInvalidInput = (inputList) => {
 
 const toggleButtonState = (inputList, buttonElement, inactiveButtonClass) => {
   if (hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(inactiveButtonClass);
+    disableSubmitButton(buttonElement, inactiveButtonClass);
   } else {
-    buttonElement.disabled = false;
-    buttonElement.classList.remove(inactiveButtonClass);
+    enableSubmitButton(buttonElement, inactiveButtonClass);
   }
 };
 
@@ -64,14 +74,11 @@ export const clearValidation = (formElement, validationConfig, buttonStartedIsAc
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   if (buttonStartedIsActive) {
-    buttonElement.disabled = false;
-    // buttonElement.classList.contains(validationConfig.inactiveButtonClass) ? buttonElement.classList.remove(validationConfig.inactiveButtonClass) : false;
-    buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+    enableSubmitButton(buttonElement, validationConfig.inactiveButtonClass);
   } else {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(validationConfig.inactiveButtonClass);
+    disableSubmitButton(buttonElement, validationConfig.inactiveButtonClass);
   }
   inputList.forEach((inputElement) => {
     hideInputError(formElement, inputElement, validationConfig.errorClass);
   });
-}
+};

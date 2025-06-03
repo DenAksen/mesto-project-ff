@@ -1,3 +1,8 @@
+import {
+  changeTextButtonSaveOnLoad,
+  changeTextButtonDeleteOnLoad
+} from "./changeTextButtonOnLoad.js";
+
 const config = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-39",
   headers: {
@@ -6,17 +11,20 @@ const config = {
   },
 };
 
+const handleResponse = (response) => {
+  if (response.ok) {
+    return response.json();
+  }
+  return Promise.reject(`Ошибка: ${response.status}`);
+};
+
 // Получение данных пользователя
 export const getProfileData = async () => {
   const res = await fetch(`${config.baseUrl}/users/me`, {
     method: "GET",
     headers: config.headers,
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };
 
 // Получение данных карточек
@@ -25,15 +33,12 @@ export const getInitialCards = async () => {
     method: "GET",
     headers: config.headers,
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };
 
 // Обновление данных профиля
-export const submitProfileData = async (inputName, inputJob) => {
+export const submitProfileData = async (inputName, inputJob, button) => {
+  changeTextButtonSaveOnLoad(button, true);
   const res = await fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: config.headers,
@@ -42,15 +47,12 @@ export const submitProfileData = async (inputName, inputJob) => {
       about: inputJob.value,
     }),
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };
 
 // Добавление новой карточки
-export const submitNewCard = async (inputName, inputLink) => {
+export const submitNewCard = async (inputName, inputLink, button) => {
+  changeTextButtonSaveOnLoad(button, true);
   const res = await fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
@@ -59,24 +61,17 @@ export const submitNewCard = async (inputName, inputLink) => {
       link: inputLink.value,
     }),
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };
 
 // Удаление карточки
-export const deleteCard = async (cardId) => {
+export const deleteCard = async (cardId, button) => {
+  changeTextButtonDeleteOnLoad(button, true);
   const res = await fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };
 
 export const toggleCardLike = async (cardId, method) => {
@@ -84,14 +79,11 @@ export const toggleCardLike = async (cardId, method) => {
     method: method,
     headers: config.headers,
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };
 
-export const changeAvatar = async (url) => {
+export const changeAvatar = async (url, button) => {
+  changeTextButtonSaveOnLoad(button, true);
   const res = await fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
@@ -99,9 +91,5 @@ export const changeAvatar = async (url) => {
       avatar: url,
     }),
   });
-  if (res.ok) {
-    return res.json();
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`);
-  }
+  return handleResponse(res);
 };

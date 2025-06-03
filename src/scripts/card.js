@@ -22,7 +22,7 @@ export function createCard(
   const likeButton = cardElement.querySelector(".card__like-button");
   const cardImage = cardElement.querySelector(".card__image");
   const cardLikesCount = cardElement.querySelector(".card__quantity-likes");
-  const displayButtonDelete = data.owner._id === profileId;
+  const displayButtonDelete = (data.owner._id === profileId) || (profileId === 'newCard');
   const displayLikeCardActive = data.likes.some(
     (user) => user._id === profileId
   );
