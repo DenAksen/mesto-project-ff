@@ -5,6 +5,8 @@ import { validationConfig } from "./scripts/validation/validationConfig.js";
 import {
   enableValidation,
   clearValidation,
+  disableSubmitButton,
+  enableSubmitButton
 } from "./scripts/validation/validation.js";
 import {
   getProfileData,
@@ -69,7 +71,8 @@ const profileImage = document.querySelector(".profile__image");
 // Обработчик отправки формы добавления карточки
 const handleFormNewCardSubmit = async (evt) => {
   evt.preventDefault();
-  submitNewCard(inputNameFormNewCard, inputLinkFormNewCard, submitButtonFormNewCard)
+  changeTextButtonSaveOnLoad(submitButtonFormNewCard, true);
+  submitNewCard(inputNameFormNewCard, inputLinkFormNewCard)
     .then((res) => {
       renderCard(
         placeList,
@@ -109,7 +112,8 @@ const handleCardDelete = (cardId, cardElement) => {
   // Обработчик отправки формы подтверждения
   function handleConfirmSubmit(evt) {
     evt.preventDefault();
-    deleteCard(cardId, submitButtonFormDeleteCard)
+    changeTextButtonDeleteOnLoad(submitButtonFormDeleteCard, true);
+    deleteCard(cardId)
       .then(() => {
         cardElement.remove();
         closeModal(popupCardDelete);
@@ -164,21 +168,21 @@ const openPopupImage = (cardImage) => {
 function openPopupProfile() {
   inputNameFormProfile.value = titleProfile.textContent;
   inputJobFormProfile.value = descriptionProfile.textContent;
-  clearValidation(formProfile, validationConfig, true);
+  clearValidation(formProfile, validationConfig, enableSubmitButton);
   openModal(popupEdit);
 }
 
 // Функция открывает попап добавления карточки
 function openPopupNewCard() {
   formNewCard.reset();
-  clearValidation(formNewCard, validationConfig);
+  clearValidation(formNewCard, validationConfig, disableSubmitButton);
   openModal(popupNewCard);
 }
 
 // Открывает попап смены аватара
 function openPopupUpdateAvatar() {
   formUpdateAvatar.reset();
-  clearValidation(formUpdateAvatar, validationConfig);
+  clearValidation(formUpdateAvatar, validationConfig, disableSubmitButton);
   openModal(popupUpdateAvatar);
 }
 
@@ -186,7 +190,8 @@ function openPopupUpdateAvatar() {
 function handleFormAvatarSubmit(evt) {
   evt.preventDefault();
   const url = inputUpdateAvatar.value;
-  changeAvatar(url, submitButtonFormAvatar)
+  changeTextButtonSaveOnLoad(submitButtonFormAvatar, true);
+  changeAvatar(url)
     .then((res) => {
       profileImage.style.backgroundImage = `url(${res.avatar})`;
       closeModal(popupUpdateAvatar);
@@ -202,7 +207,8 @@ function handleFormAvatarSubmit(evt) {
 // Обработчик отправки формы Профиля
 const handleFormProfileSubmit = (evt) => {
   evt.preventDefault(); // Сброс стандартного поведения
-  submitProfileData(inputNameFormProfile, inputJobFormProfile, submitButtonFormProfile)
+  changeTextButtonSaveOnLoad(submitButtonFormProfile, true);
+  submitProfileData(inputNameFormProfile, inputJobFormProfile)
     .then((result) => {
       titleProfile.textContent = result.name;
       descriptionProfile.textContent = result.about;

@@ -1,8 +1,3 @@
-import {
-  changeTextButtonSaveOnLoad,
-  changeTextButtonDeleteOnLoad
-} from "./changeTextButtonOnLoad.js";
-
 const config = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-39",
   headers: {
@@ -37,8 +32,7 @@ export const getInitialCards = async () => {
 };
 
 // Обновление данных профиля
-export const submitProfileData = async (inputName, inputJob, button) => {
-  changeTextButtonSaveOnLoad(button, true);
+export const submitProfileData = async (inputName, inputJob) => {
   const res = await fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: config.headers,
@@ -51,8 +45,7 @@ export const submitProfileData = async (inputName, inputJob, button) => {
 };
 
 // Добавление новой карточки
-export const submitNewCard = async (inputName, inputLink, button) => {
-  changeTextButtonSaveOnLoad(button, true);
+export const submitNewCard = async (inputName, inputLink) => {
   const res = await fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
@@ -65,8 +58,7 @@ export const submitNewCard = async (inputName, inputLink, button) => {
 };
 
 // Удаление карточки
-export const deleteCard = async (cardId, button) => {
-  changeTextButtonDeleteOnLoad(button, true);
+export const deleteCard = async (cardId) => {
   const res = await fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers,
@@ -82,8 +74,7 @@ export const toggleCardLike = async (cardId, method) => {
   return handleResponse(res);
 };
 
-export const changeAvatar = async (url, button) => {
-  changeTextButtonSaveOnLoad(button, true);
+export const changeAvatar = async (url) => {
   const res = await fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
